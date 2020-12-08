@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+{% block content %}
+
+  <main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+
+        <ol>
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li>Events</li>
+        </ol>
+        <h2>Events</h2>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+  <!-- ======= New Event Section ======= -->
+    <section id="about" class="about" style="padding-top: 20px !important; padding-bottom: 20px !important;">
+      <div class="container" data-aos="fade-up">
+
+          <div class="row content">
+              <div class="col d-flex justify-content-end">
+                  <a href="#" class="btn-learn-more"><i class="icofont-plus-circle"></i> Add New Event</a>
+              </div>
+          </div>
+      </div>
+    </section><!-- End New Event Section -->
+
+
+    <!-- ======= Filter Event Section ======= -->
+    <section id="about" class="about section-bg" style="padding-top: 20px !important; padding-bottom: 10px !important;">
+      <div class="container" data-aos="fade-up">
+
+            <form method="post">
+                <div class="row content d-flex align-items-center justify-content-center">
+                    <div class="col-lg-3 col-md d-flex align-items-center justify-content-center">
+                    <div class="form-group">
+                    <label style="display: flex; padding-bottom: 5px">Select a town</label>
+                       <select class="selectpicker" data-style="btn-outline-primary" data-container="body" name="town">
+                           {% for town in towns  %}
+                               <option value="{{ town.id }}" {% if session.get('town_id') and town.id|string in session.get('town_id') %}selected{% endif %}>{{ town.name }}</option>
+                           {% endfor %}
+                        </select>
+                        {% for error in filter_event_form.town.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md d-flex align-items-center justify-content-center">
+                    <div class="form-group">
+                    <label style="display: flex; padding-bottom: 5px">Select a sport</label>
+                    <select class="selectpicker" data-style="btn-outline-primary" data-container="body" name="sport">
+                       <option value="all">All</option>
+                       <option data-divider="true"></option>
+                       {% for sport in sports %}
+                           <option value="{{ sport.id }}" {% if session.get('sport_id') and sport.id|string in session.get('sport_id') %}selected{% endif %}>{{ sport.name }}</option>
+                       {% endfor %}
+                    </select>
+                        {% for error in filter_event_form.sport.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md d-flex align-items-center justify-content-center">
+                    <div class="form-group">
+                        <label style="display: flex; color:#f3f5fa; padding-bottom: 5px">###</label>
+                        {{ filter_event_form.submit(class='btn-learn-more') }}
+                        {{ filter_event_form.hidden_tag() }}
+                    </div>
+                    </div>
+                    </div>
+            </form>
+            </div>
+    </section><!-- End Filter Event Section -->
+
+  <!-- ======= Events Section ======= -->
+            <section id="contact" class="contact">
+              <div class="container" data-aos="fade-up">
+
+                <div class="row justify-content-center">
+
+                  <div class="col-lg-12 col-md-12 d-flex align-items-stretch">
+                    <div class="php-email-form">
+                        {% if events|length > 0 %}
+                            <div class="row" style="text-align: center; padding-bottom: 15px">
+                                <div class="col-2 col-md-1"><h5 style="color: rgb(33,190,33) !important;">Town</h5></div>
+                                <div class="col-2 col-md-2"><h5 style="color: rgb(33,190,33) !important;">Sport</h5></div>
+                                <div class="col-2 col-md-2"><h5 style="color: rgb(33,190,33) !important;">Place</h5></div>
+                                <div class="col-2 col-md-2"><h5 style="color: rgb(33,190,33) !important;">Start</h5></div>
+                                <div class="col-2 col-md-2"><h5 style="color: rgb(33,190,33) !important;">End</h5></div>
+                                <div class="col-md-2 d-none d-md-block"><h5 style="color: rgb(33,190,33) !important;">Added By</h5></div>
+                                <div class="col-2 col-md-1"></div>
+                            </div>
+                            {% for event in events %}
+                                <div class="row" style="text-align: center; padding-bottom: 10px">
+                                    <div class="col-2 col-md-1 d-flex align-items-center justify-content-center">{{ event.town.name }}</div>
+                                    <div class="col-2 d-md-none d-flex align-items-center justify-content-center"><i class="{{ event.sport.icon }}"></i></div>
+                                    <div class="col-2 d-none d-md-flex align-items-center justify-content-center"><i class="{{ event.sport.icon }}" style="padding-right: 5px"></i>{{ event.sport.name }}</div>
+                                    <div class="col-2 col-md-2 d-flex align-items-center justify-content-center"><a href="">{{ event.place }}</a></div>
+                                    <div class="col-2 col-md-2 d-flex align-items-center justify-content-center">{{ event.date_start }}</div>
+                                    <div class="col-2 col-md-2 d-flex align-items-center justify-content-center">{{ event.date_end }}</div>
+                                    <div class="col-md-2 d-none d-md-flex align-items-center justify-content-center">
+                                        <a href="">{{ event.creator.name }} {{ event.creator.surname }}</a>
+                                    </div>
+                                    <div class="col-2 col-md-1 d-flex align-items-center justify-content-center">
+                                        {% if session.get('user_id') and event.wanted_players_number > 0 %}
+                                            <button type="submit" style="padding: 5px 10px 5px 10px !important; font-size: 0.9em; margin-top: 5px">Join</button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="row d-flex justify-content-center">No events available.</div>
+                        {% endif %}
+                  </div>
+
+                </div>
+                </div>
+              </div>
+            </section><!-- End Events Section -->
+
+
+  </main><!-- End #main -->
+
+{% endblock %}

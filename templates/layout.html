@@ -24,9 +24,11 @@
   <link href="{{ url_for('static', filename='vendor/owl.carousel/owl.carousel.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap-select.css') }}" rel="stylesheet">
-
   <!-- Template Main CSS File -->
   <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+  <link href="{{ url_for('static', filename='vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/datetimepicker/css/bootstrap-datetimepicker.css') }}" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: Arsha - v2.2.1
@@ -48,13 +50,15 @@
         <ul>
           <li {% if (request.path == "/" or request.path == "/index" or request.path == "/home") %} class="active"{% endif %}><a href="{{ url_for('index') }}">Home</a></li>
           <li {% if request.path == "/events" %} class="active"{% endif %}><a href="{{ url_for('events') }}">Events</a></li>
-          <li {% if request.path == "/players" %} class="active"{% endif %}><a href="#">Players</a></li>
-          <li {% if request.path == "/sportclubs" %} class="active"{% endif %}><a href="#">Sport Clubs</a></li>
+          <li {% if request.path == "/players" %} class="active"{% endif %}><a href="{{ url_for('players') }}">Players</a></li>
+          <li {% if request.path == "/sportclubs" %} class="active"{% endif %}><a href="{{ url_for('sportclubs') }}">Sport Clubs</a></li>
             {% if session['user_id'] %}
                 <li class="drop-down {% if request.path == "/myaccount" or request.path == "/reviews" or request.path == "/myevents" or request.path == "/messages" %}active{% endif %}"><a href="{{ url_for('myaccount') }}">My Account</a>
                     <ul>
                         <li {% if request.path == "/myaccount" %}class="active"{% endif %}><a href="{{ url_for('myaccount') }}">Info</a></li>
+                        {% if session['user_role'] != 3 %}
                         <li {% if request.path == "/reviews" %}class="active"{% endif %}><a href="{{ url_for('reviews') }}">Reviews</a></li>
+                        {% endif %}
                         <li {% if request.path == "/myevents" %}class="active"{% endif %}><a href="{{ url_for('myevents') }}">My Events</a></li>
                         <li {% if request.path == "/messages" %}class="active"{% endif %}><a href="{{ url_for('messages') }}">Messages</a></li>
                     </ul>
@@ -94,8 +98,8 @@
             <ul>
               <li><a href="{{ url_for('index') }}">Home</a></li>
               <li><a href="{{ url_for('events') }}">Events</a></li>
-              <li><a href="#">Players</a></li>
-              <li><a href="#">Sport Clubs</a></li>
+              <li><a href="{{ url_for('players') }}">Players</a></li>
+              <li><a href="{{ url_for('sportclubs') }}">Sport Clubs</a></li>
             </ul>
           </div>
 
@@ -144,6 +148,22 @@
   <script src="{{ url_for('static', filename='vendor/owl.carousel/owl.carousel.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap-select.js') }}"></script>
+
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datetimepicker/js/moment.min.js') }}"></script>
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="{{ url_for('static', filename='vendor/datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
+
+  <script>
+      $('#date_start_widget').datetimepicker({
+          format: 'YYYY-MM-DD HH:mm',
+          minDate: 0
+      });
+
+      $('#date_end_widget').datetimepicker({
+          format: 'YYYY-MM-DD HH:mm',
+      });
+  </script>
 
   <!-- Template Main JS File -->
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>

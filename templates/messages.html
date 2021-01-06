@@ -31,7 +31,9 @@
                     <div class="php-email-form myaccount-links">
                         <ul>
                           <li><a href="{{ url_for('myaccount') }}">Info</a></li>
-                          <li><a href="{{ url_for('reviews') }}">Reviews</a></li>
+                            {% if session['user_role'] != 3 %}
+                                <li><a href="{{ url_for('reviews') }}">Reviews</a></li>
+                            {% endif %}
                           <li><a href="{{ url_for('myevents') }}">My Events</a></li>
                           <li class="active"><a href="{{ url_for('messages') }}">Messages</a></li>
                         </ul>
@@ -39,7 +41,7 @@
                   </div>
                   <div class="col-12 col-lg-8 d-flex align-items-stretch">
                     <div class="php-email-form">
-
+                        Work in progress...
                     </div>
                   </div>
 

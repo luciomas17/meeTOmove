@@ -39,6 +39,24 @@ h1, h2, h3, h4, h5, h6 {
   padding: 10px 10px 10px 10px;
 }
 
+.record {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.record:hover {
+  background-color: rgb(243,245,250);
+}
+
+.record:active .record:focus .record:focus-visible {
+  background-color: rgb(88,186,64); !important;
+}
+
 /* The container */
 .checkbox-container {
   display: block;
@@ -175,7 +193,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-#overlay {
+#overlay, #details {
   display: none;
   transition: all 0.5s;
   border-top: 2px solid rgb(33,190,33);
@@ -183,7 +201,8 @@ h1, h2, h3, h4, h5, h6 {
   padding: 15px 30px 10px 30px;
 }
 
-#reviews-made {
+
+#reviews-made, #reviews-received, #old-events {
   font-size: 0.9em;
   display: none;
   transition: all 0.5s;
@@ -193,14 +212,15 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
 }
 
-#reviews-received {
-  font-size: 0.9em;
+#old-events {
   display: none;
   transition: all 0.5s;
-  border-top: 2px solid rgb(33,190,33);
   margin-top: 10px;
-  padding: 10px 30px 10px 30px;
-  width: 100%;
+}
+
+div[disabled] {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 
@@ -1700,6 +1720,9 @@ section {
 
 .contact .php-email-form textarea {
   padding: 10px 12px;
+  min-width: 500px;
+  min-height: 200px;
+  border: 1px solid #ced4da;
 }
 
 .contact .php-email-form button[type="submit"] {
@@ -1713,6 +1736,19 @@ section {
 
 .contact .php-email-form button[type="submit"]:hover {
   background: rgb(17,201,17);
+}
+
+.contact .php-email-form button[type="reset"] {
+  background: indianred;
+  border: 0;
+  padding: 12px 34px;
+  color: #fff;
+  transition: 0.4s;
+  border-radius: 50px;
+}
+
+.contact .php-email-form button[type="reset"]:hover {
+  background: #d26c6c;
 }
 
 @-webkit-keyframes animate-loading {

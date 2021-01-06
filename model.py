@@ -1,5 +1,8 @@
+from datetime import date, datetime
+
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField, StringField, PasswordField, BooleanField
+from wtforms import SelectField, SubmitField, StringField, PasswordField, BooleanField, DateTimeField, TextAreaField, \
+    FileField
 from wtforms.validators import DataRequired, Length, Email
 
 from app import db
@@ -11,16 +14,28 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(255), nullable=False)
-    surname = db.Column(db.String(255), nullable=False)
+    surname = db.Column(db.String(255))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     profile_pic = db.Column(db.String(255))
     reviews = db.relationship('Review', backref='reviewed')
     created_events = db.relationship('Event', backref='creator')
     joined_events = db.relationship('JoinedEvent', backref='user')
     favourite_sports = db.relationship('FavouriteSport', backref='user')
+    details = db.relationship('SportClubDetails', backref='user')
 
     def __repr__(self):
         return '<User %r>' % self.name
+
+
+class SportClubDetails(db.Model):
+    __tablename__ = 'sportclubs'
+    id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    town_id = db.Column(db.Integer, db.ForeignKey('towns.id'))
+    address = db.Column(db.String(255), nullable=False)
+    zip = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return '<Sport Club Details %r>' % self.name
 
 
 class JoinedEvent(db.Model):
@@ -48,12 +63,13 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     town_id = db.Column(db.Integer, db.ForeignKey('towns.id'))
     sport_id = db.Column(db.Integer, db.ForeignKey('sports.id'))
-    place = db.Column(db.String(255), nullable=False)
+    sport_club_id = db.Column(db.Integer)
+    place = db.Column(db.String(255))
     date_start = db.Column(db.DateTime, nullable=False)
     date_end = db.Column(db.DateTime, nullable=False)
     wanted_players_number = db.Column(db.Integer, nullable=False)
     creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    date_added = db.Column(db.Date, nullable=False)
+    date_added = db.Column(db.DateTime, default=datetime.today(), nullable=False)
     reviews = db.relationship('Review', backref='event')
     joined_users = db.relationship('JoinedEvent', backref='event')
 
@@ -84,6 +100,7 @@ class Town(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     events = db.relationship('Event', backref='town')
+    sport_club = db.relationship('SportClubDetails', backref='town')
 
     def __repr__(self):
         return '<Town %r>' % self.name
@@ -111,9 +128,46 @@ class Role(db.Model):
         return "<Role %r>" % self.name
 
 
+class CreateReview(FlaskForm):
+    reviewed_id = SelectField(validators=[DataRequired()])
+    skills = SelectField(validators=[DataRequired()])
+    sportsmanship = SelectField(validators=[DataRequired()])
+    willingness = SelectField(validators=[DataRequired()])
+    reliability = SelectField(validators=[DataRequired()])
+    punctuality = SelectField(validators=[DataRequired()])
+    notes = TextAreaField()
+    submit = SubmitField('Create')
+
+
+class CreateEvent(FlaskForm):
+    town = SelectField()
+    sport = SelectField()
+    sport_club = SelectField()
+    place = StringField(validators=[DataRequired()])
+    date_start = DateTimeField(format='%Y-%m-%d %H:%M', validators=[DataRequired()])
+    date_end = DateTimeField(format='%Y-%m-%d %H:%M', validators=[DataRequired()])
+    wanted_players_number = SelectField(validators=[DataRequired()])
+    submit = SubmitField('Add')
+
+
+class CreateEvenSportClub(FlaskForm):
+    sport = SelectField()
+    date_start = DateTimeField(format='%Y-%m-%d %H:%M', validators=[DataRequired()])
+    date_end = DateTimeField(format='%Y-%m-%d %H:%M', validators=[DataRequired()])
+    wanted_players_number = SelectField(validators=[DataRequired()])
+    submit = SubmitField('Add')
+
+
 class SearchEvent(FlaskForm):
     town = SelectField()
     sport = SelectField()
+    submit = SubmitField('Search')
+
+
+class DetailsForm(FlaskForm):
+    town = SelectField()
+    address = StringField(validators=[DataRequired()])
+    zip_code = StringField(validators=[DataRequired()])
     submit = SubmitField('Search')
 
 
@@ -126,7 +180,12 @@ class SignInForm(FlaskForm):
 
 class SignUpForm(FlaskForm):
     name = StringField(validators=[DataRequired(), Length(min=3, max=255)])
-    surname = StringField(validators=[DataRequired(), Length(min=3, max=255)])
+    surname = StringField()
     email = StringField(validators=[DataRequired(), Email()])
     password = PasswordField(validators=[DataRequired(), Length(min=3, max=255)])
     submit = SubmitField('Sign Up')
+
+
+class UploadForm(FlaskForm):
+    file = FileField('file', validators=[DataRequired()])
+    upload = SubmitField('upload')

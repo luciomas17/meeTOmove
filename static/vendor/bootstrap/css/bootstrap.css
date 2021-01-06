@@ -3584,7 +3584,7 @@ ul.dropdown-menu.inner.show > li {
   margin-bottom: 0;
 }
 
-.input-group > .form-control + .form-control,
+.input-group > .form-control + .form-control
 .input-group > .form-control + .custom-select,
 .input-group > .form-control + .custom-file,
 .input-group > .form-control-plaintext + .form-control,

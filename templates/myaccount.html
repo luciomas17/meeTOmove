@@ -31,7 +31,9 @@
                     <div class="php-email-form myaccount-links">
                         <ul>
                           <li class="active"><a href="{{ url_for('myaccount') }}">Info</a></li>
-                          <li><a href="{{ url_for('reviews') }}">Reviews</a></li>
+                            {% if session['user_role'] != 3 %}
+                                <li><a href="{{ url_for('reviews') }}">Reviews</a></li>
+                            {% endif %}
                           <li><a href="{{ url_for('myevents') }}">My Events</a></li>
                           <li><a href="{{ url_for('messages') }}">Messages</a></li>
                         </ul>
@@ -43,11 +45,12 @@
                             <div class="row justify-content-center">
                                 <div class="pic"><img src="{{ url_for('static', filename=session['user_pic']) }}" class="img-fluid" alt="" style="padding: 15px; border-radius: 50%;"></div>
                             </div>
-                            <div class="row justify-content-center"><button class="btn-primary"><i class="icofont-upload-alt"></i></button></div>
+                            <div class="row justify-content-center"><button onclick="window.location = '{{ url_for('upload') }}'" class="btn-primary"><i class="icofont-upload-alt"></i></button></div>
                             <br><br>
-                            <div class="row justify-content-center" style="font-size: 1.1em">{{ session['user_name'] }} {{ session['user_surname'] }}</div>
+                            <div class="row justify-content-center" style="font-size: 1.1em">{{ session['user_name'] }} {% if session['user_role'] !=3 %}{{ session['user_surname'] }}{% endif %}</div>
                             <div class="row justify-content-center">{{ session['user_email'] }}</div>
                             <br>
+                            {% if session['user_role'] !=3 %}
                             <div class="row justify-content-center player-score-container">
                                 <div class="player-score"><i class="icofont-star"></i> Player Score</div>
                                 <span>{{ player_score }}</span>
@@ -66,9 +69,80 @@
                                     <span style="font-size: 0.9em">{{ punctuality }}</span></div>
                                 </div>
                             </div>
+                            {% else %}
+                                <div class="row justify-content-center" style="padding: 5px">
+                                    <div class="player-score"><i class="icofont-caret-right"></i>Details</div>
+                                </div>
+                                    <div class="player-score-container score-hover"><span class="player-score">Town</span>
+                                    <span>
+                                        {% if details|length != 0 %}
+                                            {{ details[0].town.name }}
+                                        {% else %}
+                                            n.a.
+                                        {% endif %}
+                                    </span>
+                                    </div>
+                                    <div class="player-score-container score-hover"><span class="player-score">Address</span>
+                                    <span>
+                                        {% if details|length != 0 %}
+                                            {{ details[0].address }}
+                                        {% else %}
+                                            n.a.
+                                        {% endif %}
+                                    </span>
+                                    </div>
+                                    <div class="player-score-container score-hover"><span class="player-score">Zip Code</span>
+                                    <span>
+                                        {% if details|length != 0 %}
+                                            {{ details[0].zip }}
+                                        {% else %}
+                                            n.a.
+                                        {% endif %}
+                                    </span>
+                                    </div>
+                                <div class="row justify-content-center" style="padding-top: 10px">
+                                <button id="details-btn-open" onclick="details_on()" class="btn-primary"><i class="icofont-edit"></i></button>
+                                <button id="details-btn-close" onclick="details_off()" class="btn-primary" style="display: none"><i class="icofont-close"></i></button>
+                                </div>
+                                <div id="details">
+                                    <form method="post">
+                                        <div class="d-flex align-items-center" style="padding-bottom: 5px">
+                                        <label style="min-width: 100px; padding-right: 15px">Town</label>
+                                           <select class="selectpicker" data-style="btn-outline-secondary" data-container="body" name="town">
+                                               {% for town in towns  %}
+                                                   <option value="{{ town.id }}">{{ town.name }}</option>
+                                               {% endfor %}
+                                            </select>
+                                        </div>
+                                            {% for error in details_form.town.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        <div class="d-flex align-items-center" style="padding-bottom: 5px">
+                                        <label style="min-width: 100px; padding-right: 15px">Address</label>
+                                            {{ details_form.address(class='form-control') }}
+                                        </div>
+                                             {% for error in details_form.address.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        <div class="d-flex align-items-center" style="padding-bottom: 5px">
+                                        <label style="min-width: 100px; padding-right: 15px">Zip Code</label>
+                                            {{ details_form.zip_code(class='form-control') }}
+                                        </div>
+                                            {% for error in details_form.zip_code.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        <button type="submit" value='{{ details_form.submit() }}' style="padding: 5px 10px 5px 10px !important; font-size: 0.9em; margin-top: 5px">Save</button>
+                                        {{ details_form.hidden_tag() }}
+                                    </form>
+                                </div>
+                            {% endif %}
                             <br><br>
                             <div class="row justify-content-center">
+                                {% if session['user_role'] !=3 %}
                                 <div class="player-score"><i class="icofont-caret-right"></i>Favourite Sports</div>
+                                {% else %}
+                                <div class="player-score"><i class="icofont-caret-right"></i>Practicable Sports</div>
+                                {% endif %}
                             </div>
                             <div class="row d-flex justify-content-center align-items-center" style="padding-top: 10px">
                                 {% if favourite_sports != None %}
@@ -99,8 +173,6 @@
                                         <button type="submit" style="padding: 5px 10px 5px 10px !important; font-size: 0.9em; margin-top: 5px">Save</button>
                                     </form>
                             </div>
-                            <div class="row justify-content-center">
-                        </div>
                     </div>
                   </div>
 
@@ -121,6 +193,16 @@
             document.getElementById('overlay').style.display='none';
             document.getElementById('overlay-btn-open').style.display='block';
             document.getElementById('overlay-btn-close').style.display='none';
+        }
+        function details_on() {
+            document.getElementById('details').style.display='inline-block';
+            document.getElementById('details-btn-open').style.display='none';
+            document.getElementById('details-btn-close').style.display='block';
+        }
+        function details_off() {
+            document.getElementById('details').style.display='none';
+            document.getElementById('details-btn-open').style.display='block';
+            document.getElementById('details-btn-close').style.display='none';
         }
     </script>
 
